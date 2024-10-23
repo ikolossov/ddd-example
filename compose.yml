@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      dockerfile: ./dev.dockerfile
+      context: .
+    working_dir: /app
+    environment:
+      TZ: Asia/Almaty
+      APP_ENV: local
+      APP_DEBUG: true
+
+      VAR_DUMPER_FORMAT: server
+      VAR_DUMPER_SERVER: tcp://buggregator:9912
+    ports:
+      - "80:80"
+    command: [ "php", "-S", "0.0.0.0:80", "-t", "public/"]
+    volumes:
+      - ./:/app
+
+  buggregator:
+    image: ghcr.io/buggregator/server:latest
+    ports:
+      - 127.0.0.1:8000:8000
+    restart: unless-stopped
